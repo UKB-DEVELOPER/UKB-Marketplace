@@ -17,12 +17,16 @@ client_scripts {
 	'Source/client/client.lua'
 }
 
-ui_page 'http://localhost:5173/'
+ui_page 'interface/dist/index.html'
 
 files {
-	'interface/index.html',
-	'interface/*',
-	'interface/public/*'
+	'interface/dist/index.html',
+	'interface/dist/index.js',
+	'interface/dist/index.css',
+	'interface/dist/assets/image/*.png',
+	'interface/dist/assets/image/*.jpg',
+	'interface/dist/assets/sounds/*.wav',
+	'interface/dist/assets/sounds/*.ogg',
 }
 
 dependency 'esx_inventoryhud'
