@@ -29,7 +29,11 @@
 
   const KeyDown = (e: KeyboardEvent) => {
     if(e.key === "Escape") {
-      CloseUI();
+      if (payment) {
+        payment = false;
+      } else {
+        CloseUI();
+      }
     };
   }
 
@@ -97,17 +101,6 @@
     SelectTypeItem = 'All';
   }
 
-  $: Total = SelectedItems.reduce((acc, item) => acc + (item.price * item.selectedCount), 0);
-  $: TotalVat = Total + (Total * Vat);
-
-  $: {
-    SelectedItems.map((item) => {
-      if(item.selectedCount === 0 || item.selectedCount == null || item.selectedCount == '' || Total === 0) {
-        payment = false;
-      }
-    })
-	}
-
   const PaymentUI = async () => {
     playSound("scroll.wav");
     if (SelectedItems.length === 0 || Total === 0) {
@@ -135,6 +128,18 @@
     }
     item.selectedCount = e.target.value;
   }
+
+  // computed
+  $: Total = SelectedItems.reduce((acc, item) => acc + (item.price * item.selectedCount), 0);
+  $: TotalVat = Total + (Total * Vat);
+
+  $: {
+    SelectedItems.map((item) => {
+      if(item.selectedCount === 0 || item.selectedCount == null || item.selectedCount == '' || Total === 0) {
+        payment = false;
+      }
+    })
+	}
 </script>
 
 <main>
@@ -143,9 +148,7 @@
     <div class="w-full h-[100vh] flex justify-center items-center z-50 { showUI ? 'animation' : ''} { payment ? 'blur' : ''}">
       <div class="flex gap-5">
         <section id="main" class="w-[750px] flex flex-col gap-2">
-          <header
-            class="w-full opacity-90 rounded-md flex justify-start items-center text-white p-3 gap-3"
-          >
+          <header class="w-full opacity-90 rounded-md flex justify-start items-center text-white p-3 gap-3">
             <img src="sv_logo.png" alt="" class="w-11 h-11 object-cover" />
             <span class="text-lg">{marketName}</span>
           </header>
@@ -160,7 +163,6 @@
             </nav>
             <div class="w-full h-[87%] overflow-auto inventory rounded-lg p-3">
               <div class="w-full grid grid-cols-4 gap-4">
-              
                  <!--  -->
                  {#each marketItems as item}
                   {#if SelectTypeItem === 'All' || SelectTypeItem === item.typeitem}
@@ -172,18 +174,13 @@
                   {/if}
                 {/each}
                 <!--  -->
-            
               </div>
             </div>
           </div>
         </section>
-        <section
-          id="right-bar"
-          class="w-[350px] bg-[#1b1b1b] opacity-90 rounded-md flex flex-col justify-start items-center gap-2 cart"
-        >
+        <section id="right-bar" class="w-[350px] bg-[#1b1b1b] opacity-90 rounded-md flex flex-col justify-start items-center gap-2 cart">
         <header class="text-center text-2xl my-5 font-semibold">Cart</header>
         <div class="w-[90%] h-[450px] flex flex-col gap-2 overflow-auto">
-
           <!--  -->
           {#each SelectedItems as item}
           <div class="w-full h-[70px] bg-[#2e2e2e] p-3 rounded-lg flex justify-between items-center">
@@ -202,7 +199,7 @@
             </div>
             <div class="flex justify-center items-center gap-2">
               <div class="flex flex-col justify-center items-center gap-1">
-                <p class="text-white text-sm"><i class="fa-duotone fa-coins mr-2"></i>{item.price} $</p>
+                <p class="text-white text-sm"><i class="fa-duotone fa-coins mr-2"></i>{item.price * item.selectedCount} $</p>
                 <button class="text-xs w-[50px] h-[25px] bg-[#1b1b1b] rounded-md hover:text-sky-500" on:click={()=> {item.selectedCount = (item.limit - item.count)}} on:click={()=> playSound("click.ogg")}>MAX</button>  
               </div>
               <button class="cursor-pointer" on:click={()=> DeleteItemInCart(item)}><i class="fa-duotone fa-trash hover:text-rose-400"></i></button>
@@ -210,19 +207,12 @@
           </div>
           {/each}
           <!--  -->
-          
-
-
-          
-          
         </div>
-
         <div class="w-[90%] h-[50px] p-3 flex flex-col justify-between gap-2">
           <div class="flex justify-between items-center z-50">
             <p class="text-white">Total Price : <span>{Total} $</span></p>
             <button class="cursor-pointer" on:click={()=>DeleteAllItemsInCart()}><i class="fa-duotone fa-trash-can-list hover:text-rose-700"></i></button>
           </div>
-          <!-- <button class="w-full py-4 bg-[#3170aa] rounded-md" on:click={()=> {(SelectedItems.length != 0) ? Purchase() : null}}>PURCHASE</button> -->
           <button class="w-full py-4 bg-[#3170aa] rounded-md" on:click={PaymentUI}>PURCHASE</button>
           <button class="w-full py-4 bg-[#777777] rounded-md" on:click={CloseUI}>EXIT</button>
         </div>

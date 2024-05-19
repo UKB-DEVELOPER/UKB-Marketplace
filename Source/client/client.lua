@@ -78,7 +78,8 @@ Citizen.CreateThread(function()
 								if v.DrawText3D then
 									DrawText3D(v.Pos[i].x, v.Pos[i].y, v.Pos[i].z+0.9, v.npc.name)
 								end
-								if IsControlJustPressed(0, Keys['E']) and GetEntityHealth(playerped) > 0 then
+								local IsDead = IsEntityDead(PlayerPedId())
+								if IsControlJustPressed(0, Keys['E']) and not IsDead then
 									showUI = true
 									local items = getItems(v.item)
 									SetNuiFocus(true, true)
