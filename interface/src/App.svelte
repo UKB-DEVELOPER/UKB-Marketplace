@@ -58,11 +58,19 @@
     if (existingItem) {
       if(existingItem.selectedCount < (existingItem.limit - existingItem.count)) {
         existingItem.selectedCount++;
-      } else {
+      } else if( existingItem.count >= existingItem.limit){
+          Notification('warning',`ไอเทม ${item.label} ในกระเป๋าของคุณเต็มแล้ว!!`);
+          return;
+      } 
+      else {
         existingItem.selectedCount = (existingItem.limit - existingItem.count);
       }
       SelectedItems = [...SelectedItems];
     } else {
+      if (item.count >= item.limit) {
+        Notification('warning',`ไอเทม ${item.label} ในกระเป๋าของคุณเต็มแล้ว!!`);
+        return;
+      }
       SelectedItems = [...SelectedItems, { ...item, selectedCount: 1 }];
     }
   }
@@ -75,6 +83,16 @@
   const DeleteAllItemsInCart = () => {
     playSound("click.ogg")
     SelectedItems = [];
+  }
+
+  const Notification = (type:string,message: string) => {
+    fetch(`https://${ResourceName}/Notification`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type: type, message: message }),
+    });
   }
 
   const Purchase = async (typePayment : string) => {
@@ -116,7 +134,7 @@
 
   const playSound = (name : string) => {
     if (sound && name) {
-      const audio = new Audio(`sounds/${name}`);
+      const audio = new Audio(`assets/sounds/${name}`);
       audio.volume = volume;
       audio.play();
     }
@@ -149,7 +167,7 @@
       <div class="flex gap-5">
         <section id="main" class="w-[750px] flex flex-col gap-2">
           <header class="w-full opacity-90 rounded-md flex justify-start items-center text-white p-3 gap-3">
-            <img src="sv_logo.png" alt="" class="w-11 h-11 object-cover" />
+            <img src="assets/image/sv_logo.png" alt="" class="w-11 h-11 object-cover" />
             <span class="text-lg">{marketName}</span>
           </header>
           <div class="w-full h-[650px] bg-[#080808] opacity-90 rounded-md p-3">
@@ -191,7 +209,7 @@
                   <div class="flex flex-col justify-center items-center gap-2">
                     <div class="flex gap-1 justify-center items-center">
                       <button on:click={()=> {if(item.selectedCount > 1) item.selectedCount--}} on:click={()=> playSound("click.ogg")}><i class="fa-solid fa-minus p-1 bg-[#1b1b1b] rounded-l-md cursor-pointer hover:text-sky-500"></i></button>
-                        <input type="number" min="1" class="w-[40px] h-[22px] bg-[#1b1b1b] text-center focus:outline-0 rounded-sm" on:input={e=> MAX(e,(item.limit-item.count) , item)} bind:value={item.selectedCount}>
+                        <input type="number" class="w-[40px] h-[22px] bg-[#1b1b1b] text-center focus:outline-0 rounded-sm" on:input={e=> MAX(e,(item.limit-item.count) , item)} bind:value={item.selectedCount}>
                       <button on:click={()=> {(item.selectedCount < (item.limit - item.count)) ? item.selectedCount++ : null}} on:click={()=> playSound("click.ogg")}><i class="fa-solid fa-plus p-1 bg-[#1b1b1b] rounded-r-md cursor-pointer hover:text-sky-500"></i></button>
                   </div>
                 </div>

@@ -1,55 +1,34 @@
-local __internal_perform = PerformHttpRequest
-local __external_perform = function(url, cb, ...)
-  icb = function(_, ...)
-      cb(200, ...)
-  end
-  __internal_perform(url, icb, ...)
-end
-PerformHttpRequest = __external_perform
-
 ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 local ResourceName = GetCurrentResourceName()
-scriptId = "663f15e964700c6ab3cc542c"
 
-
-Staus = function ( errNum , data)
-
-    Status = false
-        
-    if ( errNum == 200 and data == scriptId) then
-        print("\n")
-        print("^2###########################################") 
-        print("^2## ^5Thank you for purchasing UKB - Script ^2##") 
-        print("^2##   ^5https://shop.unknowkubbrother.net   ^2##") 
-        print("^2###########################################") 
-        Status = true
-        Reply(Status)
-        TriggerClientEvent(ResourceName..':checkLicense', -1, Status)
-    else
-        print("\n")
-        print("^1###########################################") 
-        print("^1##   ^5UKB - Script ^1 License inavlid ^1      ##") 
-        print("^1##   ^5https://shop.unknowkubbrother.net   ^1##") 
-        print("^1###########################################") 
-        TriggerClientEvent(ResourceName..':checkLicense', -1, Status)
+RegisterServerEvent(ResourceName..':BuyItem')
+AddEventHandler(ResourceName..':BuyItem', function(item, Total, typePayment)
+    local source = source
+    local xPlayer = ESX.GetPlayerFromId(source)
+    print("Money",xPlayer.getMoney())
+    print("Bank",xPlayer.getAccount('bank').money)
+    if not xPlayer then return end
+    if typePayment == 'Cash' then
+        if xPlayer.getMoney() >= tonumber(Total) then
+            xPlayer.removeMoney(tonumber(Total))
+            for k, v in pairs(item) do
+                xPlayer.addInventoryItem(v.name, tonumber(v.count))
+            end
+            Shop.NotifyServer(source, 'success', 'ซื้อสินค้าสำเร็จ')
+        else
+            Shop.NotifyServer(source, 'error', 'คุณมีเงินในตัวไม่พอ')
+        end
+    elseif typePayment == 'Bank' then
+        if xPlayer.getAccount('bank').money >= tonumber(Total) then
+            xPlayer.removeAccountMoney('bank', tonumber(Total))
+            for k, v in pairs(item) do
+                xPlayer.addInventoryItem(v.name, tonumber(v.count))
+            end
+            Shop.NotifyServer(source, 'success', 'ซื้อสินค้าสำเร็จ')
+        else
+            Shop.NotifyServer(source, 'error', 'คุณมีเงินในธนาคารคุณไม่พอ')
+        end
     end
 
-end
-
-Connect = function ()
-
-    PerformHttpRequest("https://api.unknowkubbrother.net/checkLicense", function (errorCode, resultData, resultHeaders, errorData)
-        Staus(errorCode, resultData)
-    end, "POST", json.encode(Config.license), { ["Content-Type"] = "application/json" })
-    
-end
-
-Connect()
-
-Reply = function (Status)
-    if Status then
-            
-        print("Test")
-    end
-end
+end)

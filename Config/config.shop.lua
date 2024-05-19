@@ -87,3 +87,27 @@ Shop.textUI = function()
         exports['esx_textui']:ShowHelpNotification('Press ~INPUT_CONTEXT~ to buy item')
     end)
 end
+
+Shop.NotifyServer = function(playerId, type ,description)
+    pcall(function()
+        exports.nc_notify:PushNotification(playerId,{
+            title = 'ระบบ',
+            description = description,
+            icon = 'default',
+            type = type,
+            duration = 5000
+        })
+    end)
+end
+
+Shop.NotifyClient = function(type ,description)
+    pcall(function()
+        exports.nc_notify:PushNotification({
+            title = 'ระบบ',
+            description = description,
+            icon = 'default',
+            type = type,
+            duration = 5000
+        })
+    end)
+end

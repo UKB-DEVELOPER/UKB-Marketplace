@@ -36,9 +36,12 @@ RegisterNUICallback('Purchase', function(data,cb)
 	showUI = data.showUI
 	local Total = data.Total
 	local typePayment = data.typePayment
-	print(json.encode(items))
-	print(Total)
-	print(typePayment)
+	TriggerServerEvent(ResourceName..':BuyItem', items, Total, typePayment)
+	cb("ok")
+end)
+
+RegisterNUICallback('Notification', function(data,cb)
+	Shop.NotifyClient(data.type, data.message)
 	cb("ok")
 end)
 
