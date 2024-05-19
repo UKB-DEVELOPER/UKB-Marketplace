@@ -35,8 +35,10 @@ RegisterNUICallback('Purchase', function(data,cb)
 	local items = data.items
 	showUI = data.showUI
 	local Total = data.Total
+	local typePayment = data.typePayment
 	print(json.encode(items))
 	print(Total)
+	print(typePayment)
 	cb("ok")
 end)
 
@@ -72,7 +74,7 @@ Citizen.CreateThread(function()
 									job = true
 								end
 							if job then
-								exports[Shop.Notify.name]:ShowHelpNotification(Shop.Notify.message)
+								Shop.textUI()
 								if v.DrawText3D then
 									DrawText3D(v.Pos[i].x, v.Pos[i].y, v.Pos[i].z+0.9, v.npc.name)
 								end
@@ -86,7 +88,10 @@ Citizen.CreateThread(function()
 										showUI = showUI,
 										ResourceName = ResourceName,
 										items = items,
-										inventoryPath = Shop.inventoryPath
+										inventoryPath = Shop.inventoryPath,
+										Vat = Shop.Vat,
+										sound = Shop.sound,
+										volume = Shop.volume,
 									})
 								end
 							end

@@ -8,12 +8,10 @@ Config.license = {
 Shop = {}
 Shop.distance = 30
 Shop.inventoryPath = "nui://esx_inventoryhud/html/img/items/"
-Shop.Notify = {
-    name = 'esx_textui',
-    message = 'Press ~INPUT_CONTEXT~ to buy item',
-}
-
 Shop.Weight = false  
+Shop.Vat = 0.05
+Shop.sound = true
+Shop.volume = 0.2
 
 Shop.listShop = {
     ['ร้านค้าทั่วไป'] = {
@@ -46,7 +44,7 @@ Shop.listShop = {
         npc = {
             enable = true,
             model = "s_m_m_linecook",
-            dict = "WORLD_HUMAN_CLIPBOARD", --https://alexguirre.github.io/animations-list/
+            dict = "WORLD_HUMAN_CLIPBOARD", --@comment หาได้จาก https://alexguirre.github.io/animations-list/
             name = "เจ้าของร้านทั่วไป",
             heading = 344.4,
         }
@@ -78,8 +76,14 @@ Shop.listShop = {
         npc = {
             enable = true,
             model = "s_m_m_linecook",
-            dict = "", --https://alexguirre.github.io/animations-list/
+            dict = "", --@comment หาได้จาก https://alexguirre.github.io/animations-list/
             name = "เจ้าของร้านตำรวจ",
         }
     }
 }
+
+Shop.textUI = function()
+    pcall(function()
+        exports['esx_textui']:ShowHelpNotification('Press ~INPUT_CONTEXT~ to buy item')
+    end)
+end
