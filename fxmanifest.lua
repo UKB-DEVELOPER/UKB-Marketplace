@@ -17,16 +17,16 @@ client_scripts {
 	'Source/client/client.lua'
 }
 
-ui_page 'interface/dist/index.html'
+ui_page 'interface/index.html'
 
 files {
-	'interface/dist/index.html',
-	'interface/dist/index.js',
-	'interface/dist/index.css',
-	'interface/dist/assets/image/*.png',
-	'interface/dist/assets/image/*.jpg',
-	'interface/dist/assets/sounds/*.wav',
-	'interface/dist/assets/sounds/*.ogg',
+	'interface/index.html',
+	'interface/index.js',
+	'interface/index.css',
+	'interface/assets/image/*.png',
+	'interface/assets/image/*.jpg',
+	'interface/assets/sounds/*.wav',
+	'interface/assets/sounds/*.ogg',
 }
 
 dependency 'esx_inventoryhud'

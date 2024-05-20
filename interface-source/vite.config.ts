@@ -7,6 +7,7 @@ export default defineConfig({
   base: './',
   build:{
     emptyOutDir: true,
+    outDir: '../interface',
     reportCompressedSize: false,
     minify: true,
     target: 'chrome91',
